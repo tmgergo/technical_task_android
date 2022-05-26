@@ -17,8 +17,7 @@
         android:layout_height="@dimen/loading_indicator_height"
         android:layout_gravity="center"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include
+        android:id="@+id/userListContent"
+        layout="@layout/content_user_list"/>
 </FrameLayout>

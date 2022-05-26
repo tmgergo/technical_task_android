@@ -6,4 +6,6 @@
     <string name="are_you_sure_you_want_to_remove_this_user">Are you sure you want to remove this user?</string>
     <string name="OK">OK</string>
     <string name="No">No</string>
+
+    <string name="add_new_user">Add new user</string>
 </resources>

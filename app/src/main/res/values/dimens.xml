@@ -4,4 +4,6 @@
 
     <dimen name="loading_indicator_width">56dp</dimen>
     <dimen name="loading_indicator_height">56dp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

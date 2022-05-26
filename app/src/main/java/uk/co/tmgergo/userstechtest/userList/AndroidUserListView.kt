@@ -3,12 +3,19 @@ package uk.co.tmgergo.userstechtest.userList
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.snackbar.Snackbar
 import uk.co.tmgergo.userstechtest.R
 import uk.co.tmgergo.userstechtest.databinding.FragmentUserListBinding
 import uk.co.tmgergo.userstechtest.userRepository.User
 
 
 class AndroidUserListView(private val binding: FragmentUserListBinding, private val adapter: UserListAdapter) : UserListView() {
+    init {
+        binding.userListContent.fab.setOnClickListener { view ->
+            Snackbar.make(view, "TODO: add user", Snackbar.LENGTH_LONG).show()
+        }
+    }
+
     override var onDeleteUserListener: OnDeleteUserListener? = null
         set(value) {
             field = value
@@ -63,10 +70,10 @@ class AndroidUserListView(private val binding: FragmentUserListBinding, private 
     }
 
     private fun showUserList() {
-        binding.recyclerView.visibility = VISIBLE
+        binding.userListContent.root.visibility = VISIBLE
     }
 
     private fun hideUserList() {
-        binding.recyclerView.visibility = GONE
+        binding.userListContent.root.visibility = GONE
     }
 }
