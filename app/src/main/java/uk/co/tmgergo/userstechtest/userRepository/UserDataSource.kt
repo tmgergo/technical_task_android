@@ -3,13 +3,20 @@ package uk.co.tmgergo.userstechtest.userRepository
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface UserDataSource {
     @GET("/public/v2/users")
     suspend fun getUsers() : List<UserDTO>
+
+    @DELETE("/public/v2/users/{id}")
+    suspend fun deleteUser(@Path("id") id: Int) : Response<Unit>
+
 }
 
 object UserDataSourceFactory {

@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import retrofit2.HttpException
+import retrofit2.Response
 import uk.co.tmgergo.userstechtest.utils.enqueueResponse
 import uk.co.tmgergo.userstechtest.utils.enqueueResponseWithResourceBody
 import java.util.concurrent.TimeUnit
@@ -71,6 +72,35 @@ class UserDataSourceTests {
         // then the expected exception is thrown
     }
 
+    @Test
+    fun `should throw error when user deletion fails with 404`() = runTest {
+        `given user deletion will fail`(404)
+        `and the data source is created`("ACCESS_TOKEN")
+
+        val response = `when a user is deleted`()
+
+        `then should return a failed response`(response, 404)
+    }
+
+    @Test
+    fun `should not throw error when user deletion is successful`() = runTest {
+        `given user deletion will succeed`()
+        `and the data source is created`("ACCESS_TOKEN")
+
+        val response = `when a user is deleted`()
+
+        `then should return a successful response`(response, 204)
+    }
+
+    private fun `then should return a successful response`(response: Response<Unit>, expectedStatusCode: Int) {
+        assertThat(response.isSuccessful, `is`(true))
+        assertThat(response.code(), `is`(expectedStatusCode))
+    }
+
+    private fun `given user deletion will succeed`() {
+        mockWebServer.enqueueResponse(204)
+    }
+
     private fun `and the data source is created`(accessToken: String) {
         userDataSource = UserDataSourceFactory.create(mockWebServer.url("/"), client, accessToken)
     }
@@ -94,5 +124,18 @@ class UserDataSourceTests {
     private fun `then the authorization header is set`(accessToken: String) {
         assertThat(mockWebServer.takeRequest().getHeader("Authorization"), `is`("Bearer $accessToken"))
     }
+
+    private fun `given user deletion will fail`(statusCode: Int) {
+        mockWebServer.enqueueResponse(statusCode)
+    }
+
+    private suspend fun `when a user is deleted`() =
+        userDataSource.deleteUser(1111)
+
+    private fun `then should return a failed response`(response: Response<Unit>, expectedStatusCode: Int) {
+        assertThat(response.isSuccessful, `is`(false))
+        assertThat(response.code(), `is`(expectedStatusCode))
+    }
+
 
 }
