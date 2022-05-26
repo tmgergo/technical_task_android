@@ -18,6 +18,15 @@ fun UserDTO.toUser() : User? =
         }
     }
 
+fun User.toDtoUser() : UserDTO =
+    UserDTO(
+        id = id,
+        name = name,
+        email = email,
+        gender = gender.toDtoString(),
+        status = status.toDtoString()
+    )
+
 fun String.toGender() : Gender? =
     when(this) {
         GENDER_MALE -> Gender.MALE
@@ -31,3 +40,16 @@ fun String.toUserStatus() : UserStatus? =
         STATUS_INACTIVE -> UserStatus.INACTIVE
         else -> null
     }
+
+fun Gender.toDtoString() : String =
+    when(this) {
+        Gender.MALE -> GENDER_MALE
+        Gender.FEMALE -> GENDER_FEMALE
+    }
+
+fun UserStatus.toDtoString() : String =
+    when(this) {
+        UserStatus.ACTIVE -> STATUS_ACTIVE
+        UserStatus.INACTIVE -> STATUS_INACTIVE
+    }
+
