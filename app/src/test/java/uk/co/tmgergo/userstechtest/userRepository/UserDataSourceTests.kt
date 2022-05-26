@@ -73,7 +73,7 @@ class UserDataSourceTests {
     }
 
     @Test
-    fun `should throw error when user deletion fails with 404`() = runTest {
+    fun `should return failed response when user deletion fails with 404`() = runTest {
         `given user deletion will fail`(404)
         `and the data source is created`("ACCESS_TOKEN")
 
@@ -83,7 +83,7 @@ class UserDataSourceTests {
     }
 
     @Test
-    fun `should not throw error when user deletion is successful`() = runTest {
+    fun `should return success response when user deletion is successful`() = runTest {
         `given user deletion will succeed`()
         `and the data source is created`("ACCESS_TOKEN")
 

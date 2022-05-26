@@ -4,13 +4,16 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
+import retrofit2.Response
 
 @ExperimentalCoroutinesApi
 class UserRepositoryTests {
@@ -18,10 +21,14 @@ class UserRepositoryTests {
     private lateinit var closableMocks: AutoCloseable
     private lateinit var repository: UserRepository
     @Mock private lateinit var mockUserDataSource: UserDataSource
+    @Mock private lateinit var mockSuccessResponse: Response<Unit>
+    @Mock private lateinit var mockFailureResponse: Response<Unit>
 
     @Before
     fun setup() {
         closableMocks = MockitoAnnotations.openMocks(this)
+        whenever(mockSuccessResponse.isSuccessful).thenReturn(true)
+        whenever(mockFailureResponse.isSuccessful).thenReturn(false)
     }
 
     @After
@@ -85,6 +92,47 @@ class UserRepositoryTests {
         ))
     }
 
+    @Test
+    fun `should provide success when user deletion is successful`() = runTest {
+        `given user deletion will succeed`()
+        `and the repository is created`()
+
+        val result = `when a user is deleted`(User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE))
+
+        `then success is provided`(result)
+    }
+
+    @Test
+    fun `should provide failure when user deletion is unsuccessful`() = runTest {
+        whenever(mockUserDataSource.deleteUser(any())).thenReturn(mockFailureResponse)
+        `and the repository is created`()
+
+        val result = `when a user is deleted`(User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE))
+
+        `then failure is provided`(result)
+    }
+
+    @Test
+    fun `should provide failure when trying to delete a user with no id`() = runTest {
+        `given the repository is created`()
+
+        val result = `when a user is deleted`(User(id = null, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE))
+
+        `then failure is provided`(result)
+    }
+
+    private fun `then success is provided`(result: Result<Any>) {
+        assertThat(result.isSuccess, `is`(true))
+    }
+
+    private fun `then failure is provided`(result: Result<Any>) {
+        assertThat(result.isSuccess, `is`(false))
+    }
+
+    private suspend fun `when a user is deleted`(user: User) =
+        repository.deleteUser(user)
+
+
     private suspend fun `given some users are available`(users :List<UserDTO>) {
         whenever(mockUserDataSource.getUsers()).thenReturn(users)
     }
@@ -106,8 +154,12 @@ class UserRepositoryTests {
         assertThat(actual.getOrNull(), CoreMatchers.`is`(expectedUsers))
     }
 
-    private fun `then failure is provided`(result: Result<List<User>>) {
-        assertThat(result.isSuccess, CoreMatchers.`is`(false))
+    private fun `given the repository is created`() {
+        `and the repository is created`()
+    }
+
+    private suspend fun `given user deletion will succeed`() {
+        whenever(mockUserDataSource.deleteUser(any())).thenReturn(mockSuccessResponse)
     }
 
 }

@@ -7,6 +7,7 @@ import kotlin.coroutines.CoroutineContext
 
 interface UserRepository {
     suspend fun getUsers() : Result<List<User>>
+    suspend fun deleteUser(user: User) : Result<Unit>
 }
 
 class UserRepositoryImpl(
@@ -23,6 +24,19 @@ class UserRepositoryImpl(
                 dataSource.getUsers()
             }.fold(
                 { list -> Result.success(list.mapNotNull { item -> mapper.invoke(item) }) },
+                { Result.failure(it) }
+            )
+        }
+    }
+
+    override suspend fun deleteUser(user: User) : Result<Unit> {
+        return withContext(coroutineContext) {
+            runCatching {
+                user.id?.let { id ->
+                    dataSource.deleteUser(id)
+                }
+            }.fold(
+                { response -> if (response?.isSuccessful == true) Result.success(Unit) else Result.failure(Throwable()) },
                 { Result.failure(it) }
             )
         }
