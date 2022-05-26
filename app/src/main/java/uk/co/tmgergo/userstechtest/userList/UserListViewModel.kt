@@ -28,6 +28,14 @@ class UserListViewModel(
         }
     }
 
+    fun addUser(user: User) {
+        viewModelScope.launch {
+            userRepository.addUser(user).onSuccess {
+                fetchUsers()
+            }
+        }
+    }
+
     fun deleteUser(user: User) {
         viewModelScope.launch {
             userRepository.deleteUser(user).onSuccess {

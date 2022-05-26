@@ -24,6 +24,7 @@ class AndroidUserListView(private val binding: FragmentUserListBinding, private 
             }
         }
 
+    override var onAddUserListener: OnAddUserListener? = null
 
     override fun displayLoadingIndicator() {
         hideErrorMessage()

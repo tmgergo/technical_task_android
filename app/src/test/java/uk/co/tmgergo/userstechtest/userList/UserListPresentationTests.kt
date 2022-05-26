@@ -123,13 +123,63 @@ class UserListPresentationTests {
         `and the users are not presented again`()
     }
 
+    @Test
+    fun `should add user to repository and present fresh user list on success`() = runTest {
+        `given the repository provides users`(listOf(
+            User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE),
+        ))
+        `and the view model is created`()
+        `and the view is ready to present data`()
+        `and user addition will succeed`(User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+        `and the repository provides users`(listOf(
+            User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE),
+            User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE),
+        ))
+
+        `when a user is added`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+
+        `then the user is added to the repository`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+        `and a loading indicator is shown`()
+        `and the correct users are presented`(listOf(
+            User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE),
+            User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE),
+        ))
+    }
+
+    @Test
+    fun `should attempt to add user to repository but not present fresh user list on failure`() = runTest {
+        `given the repository provides users`(listOf(
+            User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE),
+        ))
+        `and the view model is created`()
+        `and the view is ready to present data`()
+        `and user addition will fail`()
+
+        `when a user is added`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+
+        `then the user is added to the repository`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+        `and a loading indicator is not shown again`()
+        `and the users are not presented again`()
+    }
+
     private suspend fun `then the user is deleted from the repository`(user: User) {
         verify(mockUserRepository).deleteUser(user)
+    }
+
+    private suspend fun `then the user is added to the repository`(user: User) {
+        verify(mockUserRepository).addUser(user)
     }
 
     private fun `when a user is deleted`(user: User) {
         val listenerCaptor = argumentCaptor<(OnDeleteUserListener)>()
         verify(mockView).onDeleteUserListener = listenerCaptor.capture()
+        val itemsListener = listenerCaptor.firstValue
+        itemsListener.invoke(user)
+    }
+
+    private fun `when a user is added`(user: User) {
+        val listenerCaptor = argumentCaptor<(OnAddUserListener)>()
+        verify(mockView).onAddUserListener = listenerCaptor.capture()
         val itemsListener = listenerCaptor.firstValue
         itemsListener.invoke(user)
     }
@@ -140,6 +190,14 @@ class UserListPresentationTests {
 
     private suspend fun `and user deletion will fail`() {
         whenever(mockUserRepository.deleteUser(any())).thenReturn(Result.failure(Throwable()))
+    }
+
+    private suspend fun `and user addition will succeed`(user: User) {
+        whenever(mockUserRepository.addUser(any())).thenReturn(Result.success(user))
+    }
+
+    private suspend fun `and user addition will fail`() {
+        whenever(mockUserRepository.addUser(any())).thenReturn(Result.failure(Throwable()))
     }
 
     private suspend fun `given the repository cannot provide users`() {
