@@ -6,7 +6,7 @@ import uk.co.tmgergo.userstechtest.databinding.FragmentUserListBinding
 import uk.co.tmgergo.userstechtest.userRepository.User
 
 
-class AndroidUserListView(private val binding: FragmentUserListBinding, private val adapter: UserListAdapter) : UserListView {
+class AndroidUserListView(private val binding: FragmentUserListBinding, private val adapter: UserListAdapter) : UserListView() {
     override fun displayLoadingIndicator() {
         hideErrorMessage()
         hideUserList()

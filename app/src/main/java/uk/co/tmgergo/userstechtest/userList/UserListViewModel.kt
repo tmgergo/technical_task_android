@@ -28,14 +28,24 @@ class UserListViewModel(
         }
     }
 
-    private fun fetchUsers() = viewModelScope.launch {
-        userRepository.getUsers()
-            .fold(
-                { users ->
-                    usersState = users
-                    usersListener?.invoke(users)
-                },
-                { errorListener?.invoke(textProvider.getGenericErrorMessage()) }
-            )
+    fun deleteUser(user: User) {
+        viewModelScope.launch {
+            userRepository.deleteUser(user).onSuccess {
+                fetchUsers()
+            }
+        }
+    }
+
+    private fun fetchUsers() {
+        viewModelScope.launch {
+            userRepository.getUsers()
+                .fold(
+                    { users ->
+                        usersState = users
+                        usersListener?.invoke(users)
+                    },
+                    { errorListener?.invoke(textProvider.getGenericErrorMessage()) }
+                )
+        }
     }
 }
