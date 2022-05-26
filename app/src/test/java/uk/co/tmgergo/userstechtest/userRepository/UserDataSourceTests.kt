@@ -40,11 +40,12 @@ class UserDataSourceTests {
     @Test
     fun `should provide users when fetch is successful`() = runTest {
         `given data fetch will succeed`(200, "users_success.json")
-        `and the data source is created`()
+        `and the data source is created`("ACCESS_TOKEN")
 
         val users = `when users data is fetched`()
 
-        `then the correct users are provided`(users, listOf(
+        `then the authorization header is set`("ACCESS_TOKEN")
+        `and the correct users are provided`(users, listOf(
             UserDTO(1111, "John Doe", "john.doe@mail.com", "male", "active"),
             UserDTO(1112, "Jane Doe", "jane.doe@mail.com", "female", "inactive")
         ))
@@ -53,7 +54,7 @@ class UserDataSourceTests {
     @Test(expected = com.google.gson.stream.MalformedJsonException::class)
     fun `should throw error for malformed fetch response json`() = runTest {
         `given data fetch will succeed`(200, "users_malformed.json")
-        `and the data source is created`()
+        `and the data source is created`("ACCESS_TOKEN")
 
         `when users data is fetched`()
 
@@ -63,15 +64,15 @@ class UserDataSourceTests {
     @Test(expected = HttpException::class)
     fun `should throw error for failed fetch response`() = runTest {
         `given data fetch will fail`(500)
-        `and the data source is created`()
+        `and the data source is created`("ACCESS_TOKEN")
 
         `when users data is fetched`()
 
         // then the expected exception is thrown
     }
 
-    private fun `and the data source is created`() {
-        userDataSource = UserDataSourceFactory.create(mockWebServer.url("/"), client)
+    private fun `and the data source is created`(accessToken: String) {
+        userDataSource = UserDataSourceFactory.create(mockWebServer.url("/"), client, accessToken)
     }
 
     private fun `given data fetch will succeed`(statusCode: Int, responseResource: String) {
@@ -82,12 +83,16 @@ class UserDataSourceTests {
         return userDataSource.getUsers()
     }
 
-    private fun `then the correct users are provided`(actual: List<UserDTO>, expected: List<UserDTO>) {
+    private fun `and the correct users are provided`(actual: List<UserDTO>, expected: List<UserDTO>) {
         assertThat(actual, `is`(expected))
     }
 
     private fun `given data fetch will fail`(statusCode: Int) {
         mockWebServer.enqueueResponse(statusCode)
+    }
+
+    private fun `then the authorization header is set`(accessToken: String) {
+        assertThat(mockWebServer.takeRequest().getHeader("Authorization"), `is`("Bearer $accessToken"))
     }
 
 }

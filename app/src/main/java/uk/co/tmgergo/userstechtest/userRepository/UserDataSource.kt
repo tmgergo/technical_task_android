@@ -12,12 +12,22 @@ interface UserDataSource {
 }
 
 object UserDataSourceFactory {
-    fun create(baseUrl: HttpUrl, client: OkHttpClient): UserDataSource {
+    fun create(baseUrl: HttpUrl, client: OkHttpClient, accessToken: String): UserDataSource {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(client)
+            .client(clientWithAuthHeader(client, accessToken))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(UserDataSource::class.java)
     }
+
+    private fun clientWithAuthHeader(client: OkHttpClient, accessToken: String) =
+        client.newBuilder()
+            .addInterceptor { chain ->
+                val request =
+                    chain.request().newBuilder().addHeader("Authorization", "Bearer $accessToken")
+                        .build()
+                chain.proceed(request)
+            }
+            .build()
 }
