@@ -18,14 +18,24 @@ class UserListViewModel(
     var usersListener: UsersListener? = null
     var errorListener: ErrorListener? = null
 
-    fun presentUsers() {
-        viewModelScope.launch {
-            userRepository.getUsers()
-                .fold(
-                    { users -> usersListener?.invoke(users) },
-                    { errorListener?.invoke(textProvider.getGenericErrorMessage()) }
-                )
+    private var usersState: List<User>? = null
 
+    fun presentUsers() {
+        usersState?.let {
+            usersListener?.invoke(it)
+        } ?: run {
+            fetchUsers()
         }
+    }
+
+    private fun fetchUsers() = viewModelScope.launch {
+        userRepository.getUsers()
+            .fold(
+                { users ->
+                    usersState = users
+                    usersListener?.invoke(users)
+                },
+                { errorListener?.invoke(textProvider.getGenericErrorMessage()) }
+            )
     }
 }

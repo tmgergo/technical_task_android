@@ -12,6 +12,8 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.never
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 import uk.co.tmgergo.userstechtest.userRepository.Gender
 import uk.co.tmgergo.userstechtest.userRepository.User
@@ -69,6 +71,26 @@ class UserListPresentationTests {
         `and an error message is presented`(errorMessage)
     }
 
+    @Test
+    fun `should not fetch user data again when already presented previously`() = runTest {
+        `given the repository provides users`(listOf(
+            User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE),
+            User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE),
+        ))
+        `and the view model is created`()
+        `and the view is ready to present data`()
+
+        `when the view is ready to present data again`()
+
+        `then a loading indicator is shown`()
+        `and the correct users are presented`(listOf(
+            User(1, "John Doe", "john.doe@mail.com", Gender.MALE, UserStatus.INACTIVE),
+            User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE),
+        ))
+        verify(mockUserRepository, never()).getUsers()
+    }
+
+
     private suspend fun `given the repository cannot provide users`() {
         whenever(mockUserRepository.getUsers()).thenReturn(Result.failure(Throwable()))
     }
@@ -96,4 +118,15 @@ class UserListPresentationTests {
     private fun `and an error message is presented`(message: String) {
         verify(mockView).displayError(message)
     }
+
+    private fun `when the view is ready to present data again`() {
+        reset(mockUserRepository)
+        reset(mockView)
+        `when the view is ready to present data`()
+    }
+
+    private fun `and the view is ready to present data`() {
+        `when the view is ready to present data`()
+    }
+
 }
