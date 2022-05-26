@@ -1,6 +1,7 @@
 package uk.co.tmgergo.userstechtest.userRepository
 
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,6 +13,9 @@ interface UserDataSource {
 }
 
 object UserDataSourceFactory {
+    val BASE_URL = "https://gorest.co.in/".toHttpUrl()
+    const val ACCESS_TOKEN = "ACCESS_TOKEN"
+
     fun create(baseUrl: HttpUrl, client: OkHttpClient, accessToken: String): UserDataSource {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
