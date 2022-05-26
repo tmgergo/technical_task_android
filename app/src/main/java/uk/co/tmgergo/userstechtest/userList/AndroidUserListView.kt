@@ -2,11 +2,29 @@ package uk.co.tmgergo.userstechtest.userList
 
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AlertDialog
+import uk.co.tmgergo.userstechtest.R
 import uk.co.tmgergo.userstechtest.databinding.FragmentUserListBinding
 import uk.co.tmgergo.userstechtest.userRepository.User
 
 
 class AndroidUserListView(private val binding: FragmentUserListBinding, private val adapter: UserListAdapter) : UserListView() {
+    override var onDeleteUserListener: OnDeleteUserListener? = null
+        set(value) {
+            field = value
+
+            adapter.onDeleteUserListener = { user ->
+                AlertDialog.Builder(binding.root.context)
+                    .setMessage(R.string.are_you_sure_you_want_to_remove_this_user)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.OK) { dialog, id -> value?.invoke(user) }
+                    .setNegativeButton(R.string.No) { dialog, id -> dialog.dismiss() }
+                    .create()
+                    .show()
+            }
+        }
+
+
     override fun displayLoadingIndicator() {
         hideErrorMessage()
         hideUserList()
