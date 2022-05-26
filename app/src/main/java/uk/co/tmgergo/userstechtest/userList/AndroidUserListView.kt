@@ -6,7 +6,7 @@ import uk.co.tmgergo.userstechtest.databinding.FragmentUserListBinding
 import uk.co.tmgergo.userstechtest.userRepository.User
 
 
-class AndroidUserListView(private val binding: FragmentUserListBinding) : UserListView {
+class AndroidUserListView(private val binding: FragmentUserListBinding, private val adapter: UserListAdapter) : UserListView {
     override fun displayLoadingIndicator() {
         hideErrorMessage()
         hideUserList()
@@ -16,7 +16,7 @@ class AndroidUserListView(private val binding: FragmentUserListBinding) : UserLi
     override fun displayUsers(users: List<User>) {
         hideErrorMessage()
         hideLoadingIndicator()
-        binding.numberOfUsers.text = "${users.size} users"
+        adapter.replaceItems(users)
         showUserList()
     }
 
@@ -31,6 +31,10 @@ class AndroidUserListView(private val binding: FragmentUserListBinding) : UserLi
         binding.errorMessage.visibility = VISIBLE
     }
 
+    private fun hideErrorMessage() {
+        binding.errorMessage.visibility = GONE
+    }
+
     private fun showLoadingIndicator() {
         binding.loadingIndicator.visibility = VISIBLE
     }
@@ -40,14 +44,10 @@ class AndroidUserListView(private val binding: FragmentUserListBinding) : UserLi
     }
 
     private fun showUserList() {
-        binding.numberOfUsers.visibility = VISIBLE
+        binding.recyclerView.visibility = VISIBLE
     }
 
     private fun hideUserList() {
-        binding.numberOfUsers.visibility = GONE
-    }
-
-    private fun hideErrorMessage() {
-        binding.errorMessage.visibility = GONE
+        binding.recyclerView.visibility = GONE
     }
 }

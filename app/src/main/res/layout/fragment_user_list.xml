@@ -17,9 +17,8 @@
         android:layout_height="@dimen/loading_indicator_height"
         android:layout_gravity="center"/>
 
-    <TextView
-        android:id="@+id/numberOfUsers"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"/>
+        android:layout_height="match_parent" />
 </FrameLayout>
