@@ -6,17 +6,21 @@ import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface UserDataSource {
     @GET("/public/v2/users")
     suspend fun getUsers() : List<UserDTO>
 
+    @POST("/public/v2/users")
+    suspend fun addUser(
+        @Query("name") name: String,
+        @Query("email") email: String,
+        @Query("gender") gender: String,
+        @Query("status") status: String) : UserDTO
+
     @DELETE("/public/v2/users/{id}")
     suspend fun deleteUser(@Path("id") id: Int) : Response<Unit>
-
 }
 
 object UserDataSourceFactory {

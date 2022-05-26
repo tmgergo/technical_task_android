@@ -92,6 +92,33 @@ class UserDataSourceTests {
         `then should return a successful response`(response, 204)
     }
 
+    @Test
+    fun `should return user response when user addition is successful`() = runTest {
+        `given user addition will succeed`(201, "add_user_success.json")
+        `and the data source is created`("ACCESS_TOKEN")
+
+        val user = `when a user is added`()
+
+        `then the user is returned`(user)
+    }
+
+    @Test(expected = HttpException::class)
+    fun `should throw error for failed user addition`() = runTest {
+        `given user addition will fail`(422)
+        `and the data source is created`("ACCESS_TOKEN")
+
+        `when a user is added`()
+
+        // then the expected exception is thrown
+    }
+
+    private fun `then the user is returned`(user: UserDTO) {
+        assertThat(user, `is`(UserDTO(1111, "John Doe", "john.doe@mail.com", "male", "active")))
+    }
+
+    private suspend fun `when a user is added`() =
+        userDataSource.addUser("John Doe", "john.doe@mail.com", "male", "active")
+
     private fun `then should return a successful response`(response: Response<Unit>, expectedStatusCode: Int) {
         assertThat(response.isSuccessful, `is`(true))
         assertThat(response.code(), `is`(expectedStatusCode))
@@ -109,6 +136,10 @@ class UserDataSourceTests {
         mockWebServer.enqueueResponseWithResourceBody(statusCode, responseResource)
     }
 
+    private fun `given user addition will succeed`(statusCode: Int, responseResource: String) {
+        mockWebServer.enqueueResponseWithResourceBody(statusCode, responseResource)
+    }
+
     private suspend fun `when users data is fetched`(): List<UserDTO> {
         return userDataSource.getUsers()
     }
@@ -118,6 +149,10 @@ class UserDataSourceTests {
     }
 
     private fun `given data fetch will fail`(statusCode: Int) {
+        mockWebServer.enqueueResponse(statusCode)
+    }
+
+    private fun `given user addition will fail`(statusCode: Int) {
         mockWebServer.enqueueResponse(statusCode)
     }
 
