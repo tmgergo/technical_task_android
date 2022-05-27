@@ -2,6 +2,8 @@
     <string name="app_name">Users Tech Test</string>
 
     <string name="something_went_wrong">Something went wrong.</string>
+    <string name="could_not_add_new_user">Could not add new user.</string>
+    <string name="could_not_remove_user">Could not remove user.</string>
 
     <string name="are_you_sure_you_want_to_remove_this_user">Are you sure you want to remove this user?</string>
     <string name="ok">OK</string>

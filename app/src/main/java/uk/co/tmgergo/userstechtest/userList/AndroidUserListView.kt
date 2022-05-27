@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.snackbar.Snackbar
 import uk.co.tmgergo.userstechtest.R
 import uk.co.tmgergo.userstechtest.databinding.DialogAddUserBinding
 import uk.co.tmgergo.userstechtest.databinding.FragmentUserListBinding
@@ -51,6 +52,10 @@ class AndroidUserListView(
         hideUserList()
         binding.errorMessage.text = message
         showErrorMessage()
+    }
+
+    override fun displayMessage(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
     private fun showErrorMessage() {

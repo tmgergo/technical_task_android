@@ -27,6 +27,8 @@ class UserListPresentationTests {
     @Mock private lateinit var mockUserRepository: UserRepository
     @Mock private lateinit var mockTextProvider: TextProvider
     private val errorMessage = "Oops!"
+    private val deleteFailedMessage = "Remove oops!"
+    private val additionFailedMessage = "Add oops!"
 
     @Before
     fun setup() {
@@ -34,6 +36,8 @@ class UserListPresentationTests {
         Dispatchers.setMain(UnconfinedTestDispatcher())
 
         whenever(mockTextProvider.getGenericErrorMessage()).thenReturn(errorMessage)
+        whenever(mockTextProvider.getAdditionFailedMessage()).thenReturn(additionFailedMessage)
+        whenever(mockTextProvider.getDeletionFailedMessage()).thenReturn(deleteFailedMessage)
     }
 
     @After
@@ -121,6 +125,7 @@ class UserListPresentationTests {
         `then the user is deleted from the repository`(User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
         `and a loading indicator is not shown again`()
         `and the users are not presented again`()
+        `and a error message is presented`(deleteFailedMessage)
     }
 
     @Test
@@ -160,6 +165,7 @@ class UserListPresentationTests {
         `then the user is added to the repository`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
         `and a loading indicator is not shown again`()
         `and the users are not presented again`()
+        `and a error message is presented`(additionFailedMessage)
     }
 
     private suspend fun `then the user is deleted from the repository`(user: User) {
@@ -242,6 +248,10 @@ class UserListPresentationTests {
 
     private fun `and an error message is presented`(message: String) {
         verify(mockView).displayError(message)
+    }
+
+    private fun `and a error message is presented`(message: String) {
+        verify(mockView).displayMessage(message)
     }
 
     private fun `when the view is ready to present data again`() {

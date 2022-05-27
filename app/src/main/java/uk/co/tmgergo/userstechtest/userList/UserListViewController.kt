@@ -10,6 +10,10 @@ class UserListViewController(view: UserListView, viewModel: UserListViewModel) {
             view.displayError(message)
         }
 
+        viewModel.messageListener = { message ->
+            view.displayMessage(message)
+        }
+
         view.onDeleteUserListener = { user ->
             viewModel.deleteUser(user)
         }

@@ -11,4 +11,5 @@ abstract class UserListView {
     abstract fun displayLoadingIndicator()
     abstract fun displayUsers(users: List<User>)
     abstract fun displayError(message: String)
+    abstract fun displayMessage(message: String)
 }

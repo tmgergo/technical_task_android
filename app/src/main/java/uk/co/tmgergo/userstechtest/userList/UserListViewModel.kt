@@ -11,6 +11,7 @@ import uk.co.tmgergo.userstechtest.utils.TextProvider
 
 typealias UsersListener = (List<User>) -> Unit
 typealias ErrorListener = (String) -> Unit
+typealias MessageListener = (String) -> Unit
 
 class UserListViewModel(
     private val userRepository: UserRepository,
@@ -19,6 +20,7 @@ class UserListViewModel(
 
     var usersListener: UsersListener? = null
     var errorListener: ErrorListener? = null
+    var messageListener: MessageListener? = null
 
     private var usersState: List<User>? = null
 
@@ -33,17 +35,21 @@ class UserListViewModel(
     fun addUser(name: String, email: String) {
         val user = User(name = name, email = email, gender = Gender.FEMALE, status = UserStatus.ACTIVE)
         viewModelScope.launch {
-            userRepository.addUser(user).onSuccess {
-                fetchUsers()
-            }
+            userRepository.addUser(user)
+                .fold(
+                    { fetchUsers() },
+                    { messageListener?.invoke(textProvider.getAdditionFailedMessage()) }
+                )
         }
     }
 
     fun deleteUser(user: User) {
         viewModelScope.launch {
-            userRepository.deleteUser(user).onSuccess {
-                fetchUsers()
-            }
+            userRepository.deleteUser(user)
+                .fold(
+                    { fetchUsers() },
+                    { messageListener?.invoke(textProvider.getDeletionFailedMessage()) }
+                )
         }
     }
 
