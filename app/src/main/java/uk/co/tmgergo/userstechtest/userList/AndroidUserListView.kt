@@ -1,18 +1,22 @@
 package uk.co.tmgergo.userstechtest.userList
 
+import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.snackbar.Snackbar
 import uk.co.tmgergo.userstechtest.R
+import uk.co.tmgergo.userstechtest.databinding.DialogAddUserBinding
 import uk.co.tmgergo.userstechtest.databinding.FragmentUserListBinding
 import uk.co.tmgergo.userstechtest.userRepository.User
 
 
-class AndroidUserListView(private val binding: FragmentUserListBinding, private val adapter: UserListAdapter) : UserListView() {
+class AndroidUserListView(
+    private val binding: FragmentUserListBinding,
+    private val adapter: UserListAdapter
+) : UserListView() {
     init {
-        binding.userListContent.fab.setOnClickListener { view ->
-            Snackbar.make(view, "TODO: add user", Snackbar.LENGTH_LONG).show()
+        binding.userListContent.fab.setOnClickListener {
+            showAddUserDialog()
         }
     }
 
@@ -21,13 +25,9 @@ class AndroidUserListView(private val binding: FragmentUserListBinding, private 
             field = value
 
             adapter.onDeleteUserListener = { user ->
-                AlertDialog.Builder(binding.root.context)
-                    .setMessage(R.string.are_you_sure_you_want_to_remove_this_user)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.OK) { dialog, id -> value?.invoke(user) }
-                    .setNegativeButton(R.string.No) { dialog, id -> dialog.dismiss() }
-                    .create()
-                    .show()
+                showDeleteConfirmationDialog {
+                    value?.invoke(user)
+                }
             }
         }
 
@@ -75,5 +75,28 @@ class AndroidUserListView(private val binding: FragmentUserListBinding, private 
 
     private fun hideUserList() {
         binding.userListContent.root.visibility = GONE
+    }
+
+    private fun showDeleteConfirmationDialog(positiveAction: ()-> Unit) {
+        AlertDialog.Builder(binding.root.context)
+            .setCancelable(false)
+            .setMessage(R.string.are_you_sure_you_want_to_remove_this_user)
+            .setPositiveButton(R.string.ok) { _, _ -> positiveAction.invoke() }
+            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
+    }
+
+    private fun showAddUserDialog() {
+        val dialogBinding :DialogAddUserBinding = DialogAddUserBinding.inflate(LayoutInflater.from(binding.root.context))
+        AlertDialog.Builder(binding.root.context)
+            .setCancelable(false)
+            .setView(dialogBinding.root)
+            .setPositiveButton(R.string.add) { _, _ ->
+                onAddUserListener?.invoke(dialogBinding.name.text.toString(), dialogBinding.email.text.toString())
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
     }
 }

@@ -14,8 +14,8 @@ class UserListViewController(view: UserListView, viewModel: UserListViewModel) {
             viewModel.deleteUser(user)
         }
 
-        view.onAddUserListener = { user ->
-            viewModel.addUser(user)
+        view.onAddUserListener = { name, email ->
+            viewModel.addUser(name, email)
         }
 
         view.displayLoadingIndicator()

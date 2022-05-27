@@ -4,8 +4,11 @@
     <string name="something_went_wrong">Something went wrong.</string>
 
     <string name="are_you_sure_you_want_to_remove_this_user">Are you sure you want to remove this user?</string>
-    <string name="OK">OK</string>
-    <string name="No">No</string>
+    <string name="ok">OK</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 
     <string name="add_new_user">Add new user</string>
+    <string name="name">Name</string>
+    <string name="email_address">Email address</string>
 </resources>

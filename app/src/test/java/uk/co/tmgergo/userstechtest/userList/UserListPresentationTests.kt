@@ -136,7 +136,7 @@ class UserListPresentationTests {
             User(2, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE),
         ))
 
-        `when a user is added`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+        `when a user is added`("Jane Doe", "jane.doe@mail.com")
 
         `then the user is added to the repository`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
         `and a loading indicator is shown`()
@@ -155,7 +155,7 @@ class UserListPresentationTests {
         `and the view is ready to present data`()
         `and user addition will fail`()
 
-        `when a user is added`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
+        `when a user is added`("Jane Doe", "jane.doe@mail.com")
 
         `then the user is added to the repository`(User(id = null, "Jane Doe", "jane.doe@mail.com", Gender.FEMALE, UserStatus.ACTIVE))
         `and a loading indicator is not shown again`()
@@ -177,11 +177,11 @@ class UserListPresentationTests {
         itemsListener.invoke(user)
     }
 
-    private fun `when a user is added`(user: User) {
+    private fun `when a user is added`(name: String, email: String) {
         val listenerCaptor = argumentCaptor<(OnAddUserListener)>()
         verify(mockView).onAddUserListener = listenerCaptor.capture()
         val itemsListener = listenerCaptor.firstValue
-        itemsListener.invoke(user)
+        itemsListener.invoke(name, email)
     }
 
     private suspend fun `and user deletion will succeed`() {

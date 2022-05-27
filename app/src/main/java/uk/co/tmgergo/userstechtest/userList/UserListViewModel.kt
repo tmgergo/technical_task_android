@@ -3,8 +3,10 @@ package uk.co.tmgergo.userstechtest.userList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.co.tmgergo.userstechtest.userRepository.Gender
 import uk.co.tmgergo.userstechtest.userRepository.User
 import uk.co.tmgergo.userstechtest.userRepository.UserRepository
+import uk.co.tmgergo.userstechtest.userRepository.UserStatus
 import uk.co.tmgergo.userstechtest.utils.TextProvider
 
 typealias UsersListener = (List<User>) -> Unit
@@ -28,7 +30,8 @@ class UserListViewModel(
         }
     }
 
-    fun addUser(user: User) {
+    fun addUser(name: String, email: String) {
+        val user = User(name = name, email = email, gender = Gender.FEMALE, status = UserStatus.ACTIVE)
         viewModelScope.launch {
             userRepository.addUser(user).onSuccess {
                 fetchUsers()

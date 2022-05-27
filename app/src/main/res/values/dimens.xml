@@ -6,4 +6,5 @@
     <dimen name="loading_indicator_height">56dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="dialog_padding">16dp</dimen>
 </resources>
