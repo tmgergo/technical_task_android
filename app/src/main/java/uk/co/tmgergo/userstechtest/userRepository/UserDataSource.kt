@@ -25,7 +25,7 @@ interface UserDataSource {
 
 object UserDataSourceFactory {
     val BASE_URL = "https://gorest.co.in/".toHttpUrl()
-    const val ACCESS_TOKEN = "ACCESS_TOKEN"
+    const val ACCESS_TOKEN = "[your access token here]"
 
     fun create(baseUrl: HttpUrl, client: OkHttpClient, accessToken: String): UserDataSource {
         return Retrofit.Builder()
