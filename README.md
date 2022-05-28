@@ -44,7 +44,7 @@ As mentioned before, I didn't tick off all my backlog items. Here are a few impr
 - Paging could be implemented
 - Pull to refresh would be a nice feature
 - Potentially a local data sync for offline usage
-- The current UI design is quite minimalistic. A UX person could probably greatly improve this. There is no tablet specific design either.  
+- The current UI design is quite minimalistic. A UX person could probably greatly improve this. There is no tablet specific design either. Also, I didn't test accessibility.
 
 ### Technical improvements
 While I consider my technical approach 'good enough' that fits this simple project, if the project grew bigger I would *consider* the following improvements:
