@@ -34,7 +34,7 @@ class UserListFragment : Fragment(R.layout.fragment_user_list) {
     private fun initRecyclerView(): UserListAdapter {
         with(binding.userListContent.recyclerView) {
             val layoutMngr = LinearLayoutManager(context)
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = layoutMngr
 
             val dividerItemDecoration = DividerItemDecoration(context, layoutMngr.orientation)
             addItemDecoration(dividerItemDecoration)

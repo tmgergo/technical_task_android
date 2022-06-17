@@ -33,6 +33,7 @@ class UserListViewModel(
     }
 
     fun addUser(name: String, email: String) {
+
         val user = User(name = name, email = email, gender = Gender.FEMALE, status = UserStatus.ACTIVE)
         viewModelScope.launch {
             userRepository.addUser(user)
